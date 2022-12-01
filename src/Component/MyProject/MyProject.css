@@ -1,0 +1,44 @@
+.daily-p{
+    color: #0e1a35 !important;
+    font-weight: 600 ;
+    font-size: 25px;
+}
+
+.daily-span{
+    color: #0e1a35 !important;
+    font-size: 12px;
+}
+.border-css{
+    border-top: 1px solid #0e1a35;
+    display: flex;
+    justify-content: center !important;
+}
+.table-th{
+    text-align: left;
+    padding-top: 10px;
+    background-color: #497ed354 !important;
+}
+.table-td{
+    font-size: 16px;
+    /* overflow-x: ; */
+}
+
+
+@media(max-width: 576px){
+    .table-id{
+        display: block !important;
+        overflow-x: auto !important;
+        width: 88vw !important;
+        padding: 0;
+        margin: 0;
+      }
+      .daily-p{
+        color: #0e1a35 !important;
+        font-weight: 600 ;
+        font-size: 20px;
+    }
+}
+
+
+
+
