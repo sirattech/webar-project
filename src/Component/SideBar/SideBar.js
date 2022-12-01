@@ -5,10 +5,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MailIcon from '@mui/icons-material/Mail';
@@ -16,7 +14,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import "./SideBar.css"
-import { AiOutlinePlus } from "react-icons/ai"
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { AiOutlineHome } from "react-icons/ai"
@@ -30,20 +27,16 @@ import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import one from "../../Assets/1.jpg"
-import { height } from '@mui/system';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { useSelector, useDispatch } from 'react-redux'
 import {
   Routes,
   Route,
   Link,
   useLocation,
   useNavigate,
-  useParams,
-  useResolvedPath
 } from "react-router-dom";
 import MyProject from '../MyProject/MyProject';
 import MyProfile from '../my-profile/MyProfile';
@@ -190,7 +183,6 @@ export default function ResponsiveDrawer(props: Props, { started }) {
                 <Navbar.Collapse id="responsive-navbar-nav" >
                   <Nav className=" nav  d-flex justify-content-evenly nav-one-width" >
 
-
                     <Nav.Link href="#save" className={navColor == "save" ? 'nav-text-active' : "nav-text"} id="save" onClick={() => isNavColor("save")}>Save</Nav.Link>
                     <Nav.Link href="#Preview" className={navColor == "Preview" ? 'nav-text-active' : "nav-text"} id="Preview" onClick={() => isNavColor("Preview")}>Preview</Nav.Link>
                     <Nav.Link href="#Publish" className={navColor == "Publish" ? 'nav-text-active' : "nav-text"} id="Publish" onClick={() => isNavColor("Publish")}>Publish</Nav.Link>
@@ -244,7 +236,6 @@ export default function ResponsiveDrawer(props: Props, { started }) {
         style={{ backgroundColor: "#ecf0fd" }}
       >
         <Toolbar />
-        {/* <HomePage /> */}
         <Routes>
           <Route exact path='/Homepage' element={<HomePage />} />
           <Route exact path="/myproject" element={<MyProject />} />

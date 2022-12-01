@@ -35,17 +35,17 @@ function HomePage() {
     const [file, setFile] = useState();
     const [removeImage, setRemoveImage] = useState(false);
     const [getUerId, SetGetUserId] = useState()
-    
+
 
     //    let getUerId= datagets.IdAddress
     // SetGetUserId(dataget.IdAddress)
-    
+
     useEffect(() => {
         // let dataget = GetCookie("logindata");
         // let datagets = JSON.parse(dataget)
         // SetGetUserId(datagets.IdAddress)
     })
-    
+
     function handleChange(e) {
         console.log(e.target.files);
         setFile(URL.createObjectURL(e.target.files[0]));
@@ -101,7 +101,7 @@ function HomePage() {
     const imageRemove = () => {
         setFile();
     }
-    
+
     return (
         <div className='container' style={{ maxHeight: '100vh' }} >
             {/* <form onSubmit={handlesubmit} method="post" action='/data'> */}
@@ -236,16 +236,17 @@ function HomePage() {
                 </>)
             }
 
-
+            <div className='row'>
+                <div className='col-md-2 col-11 ms-md-5 text-start'>
+                    <button className='btn btn-upload mt-3' ><a href='https://projects.sirattech.com/mind-ar-js-master/examples/image-tracking/compile.html' style={{ textDecoration: "none", color: "white" }}  target="_blank">Create QR Code</a></button>
+                   
+                </div>
+            </div>
 
             <div className='row mt-3 ms-md-5'>
                 <div className="col-6 VideoInput mt-3 text-start">
 
-                    {/* <a-scene embedded arjs>
-   <a-marker type="pattern" url={src}>
-        <a-sphere radius="1" color="#EF2D5E"></a-sphere></a-marker>
-   <a-entity camera></a-entity>
-</a-scene> */}
+
                     {/* <label className='YouTube-p text-start form-label'>Uplaod Image</label><br />
                     <input
                         ref={inputImageRef}

@@ -24,6 +24,7 @@ import { BACKEND_URI } from "./config/config"
 import Hello from './Component/hello/Hello';
 import PrivateComponent from './Component/PrivateComponent/PrivateComponent';
 import MindarViewer from './mindar-viewer';
+import InnerHtml from './Component/innerHtml/InnerHtml';
 
 function App() {
   const [started, setStarted] = useState(false);
@@ -44,6 +45,7 @@ function App() {
             <Route path="myprofile" element={<MyProfile />} />
           </Route>
             <Route path="/mindar" element={<div className="container121"><MindarViewer /><video></video></div>} />
+            {/* <Route path="/demo" element={<InnerHtml/>}/> */}
         </Route>
       </Routes>
     

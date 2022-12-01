@@ -26,10 +26,8 @@ border-radius: 50px;
 }
 .btn-upload:hover{
 
-    background-color: #ffffff;
-    color: #5584ff;
-    border-radius: 50px ;
-    border: 1px solid #5584ff;
+  background-color: #5584ff;
+  color: white;
     }
     input[type="radio"] {
       font-size: inherit;
