@@ -18,38 +18,30 @@ function HomePage() {
     const inputRef = useRef();
     const inputImageRef = useRef()
     const [source, setSource] = useState();
-    const [checkBoxValue, setCheckBoxValue] = useState([])
     const [imageSource, setImageSource] = useState()
-    const [allData, setAlldata] = useState([])
     const [radio, setRadio] = useState('false')
     const [radioOne, setRadioOne] = useState("false");
     const [TranslationURL, setTranslationURL] = useState("")
-    const [dataOne, setDateOne] = useState([])
-    const [src, setSrc] = useState()
-    const [FilePath, setFilePath] = useState("")
     const [qrscan, setqrscan] = useState(false)
     const [isColor, setIsColor] = useState("#fff")
     const [isColorOne, setIsColorOne] = useState("#000000")
     const [showColorPickerOne, setShowColorPickerOne] = useState(false)
     const [showColorPicker, setShowColorPicker] = useState(false)
     const [file, setFile] = useState();
-    const [removeImage, setRemoveImage] = useState(false);
     const [getUerId, SetGetUserId] = useState()
-
-
-    //    let getUerId= datagets.IdAddress
-    // SetGetUserId(dataget.IdAddress)
-
-    useEffect(() => {
-        // let dataget = GetCookie("logindata");
-        // let datagets = JSON.parse(dataget)
-        // SetGetUserId(datagets.IdAddress)
-    })
-
+    
     function handleChange(e) {
         console.log(e.target.files);
         setFile(URL.createObjectURL(e.target.files[0]));
     }
+
+    const handleMind = (e)=>{
+     console.log(e.target.files);
+    //  setImageSource(URL.createObjectURL(e.target.files[0]))
+     let filess= e.target.files[0]
+     setImageSource(filess)
+    }
+    console.log("imageSource", imageSource);
     const handleFileChange = (event) => {
         let file = event.target.files[0];
         // let file = URL.createObjectURL(event.target.files[0])
@@ -63,6 +55,7 @@ function HomePage() {
         setSource(file);
 
     };
+    // console.log("imageSource", source);
     const handleRadio = (e) => {
         setRadio(e.target.value)
     }
@@ -84,15 +77,24 @@ function HomePage() {
                 .catch((err) => {
                     console.log(err);
                 });
-
             const data = new FormData()
             data.append("file", source);
             await axios.post("http://localhost:8000/upload", data).then((res) => {
-                // console.log("res", res);
+                
             }).catch((e) => {
                 console.log("e", e);
             })
 
+
+
+            // const minddata = new FormData();
+            //  minddata.append("mind", imageSource)
+
+            //  await axios.post("http://localhost:8000/mindfile", minddata).then((res)=>{
+            //     console.log("minddata", res);
+            //  }).catch((e) => {
+            //     console.log("e", e);
+            // })
 
         } catch (e) {
             console.log("e", e);
@@ -237,9 +239,11 @@ function HomePage() {
             }
 
             <div className='row'>
-                <div className='col-md-2 col-11 ms-md-5 text-start'>
-                    <button className='btn btn-upload mt-3' ><a href='https://projects.sirattech.com/mind-ar-js-master/examples/image-tracking/compile.html' style={{ textDecoration: "none", color: "white" }}  target="_blank">Create QR Code</a></button>
-                   
+                <div className='col-12 mt-3'>
+                <h5 className="YouTube-p text-start form-label ms-5 mt-3">Convert image to Mind File</h5>
+                </div>
+                <div className='col-md-2 col-11 ms-md-5 text-start mt-3'>
+                    <button className='btn btn-upload ' ><a href='https://projects.sirattech.com/mind-ar-js-master/examples/image-tracking/compile.html' style={{ textDecoration: "none", color: "white" }}  target="_blank">Image Compiler</a></button>
                 </div>
             </div>
 
@@ -247,16 +251,14 @@ function HomePage() {
                 <div className="col-6 VideoInput mt-3 text-start">
 
 
-                    {/* <label className='YouTube-p text-start form-label'>Uplaod Image</label><br />
+                    <label className='YouTube-p text-start form-label'>Uplaod Mind File</label><br />
                     <input
                         ref={inputImageRef}
+                        onChange={handleMind}
                         className="VideoInput_input form-control"
                         type="file"
-                        onChange={handleImageFileChange}
-                        accept="image/*"
+                        accept="image/mind"
                     />
-              
-                    <div className="VideoInput_footer mt-2">{imageSource || "Nothing selectd"}</div> */}
                 </div>
             </div>
             <div className='row mt-4'>
@@ -286,9 +288,9 @@ function HomePage() {
 
 
                 </div>
-                <div className='col-lg-6 col-11 text-start ms-md-5 mt-3' >
+                <div className='col-lg-6 col-11 text-start  mt-3' >
                     <label htmlFor="formFile" className='YouTube-p text-start form-label'>Translation to WHat URL</label>
-                    <div className="input-group " >
+                    <div className="input-group ms-md-5 mt-4" >
                         <input type="text" className="form-control inputborder" id="inputborder" placeholder="URL" aria-label="Username" aria-describedby="basic-addon1" value={TranslationURL} onChange={(e) => setTranslationURL(e.target.value)} style={{ border: "2px solid red" }} />
                         {/* <span className="input-group-text "><BiSearch size={20} color="white" /></span> */}
                     </div>
