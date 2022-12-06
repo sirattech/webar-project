@@ -25,6 +25,7 @@ import Hello from './Component/hello/Hello';
 import PrivateComponent from './Component/PrivateComponent/PrivateComponent';
 import MindarViewer from './mindar-viewer';
 import InnerHtml from './Component/innerHtml/InnerHtml';
+import Preview from './Component/Preview/Preview';
 
 function App() {
   const [started, setStarted] = useState(false);
@@ -40,7 +41,9 @@ function App() {
         <Route element={<PrivateComponent />}>
           
           <Route exact path='/sidebar' element={<SideBar />} >
-            <Route path='Homepage' element={<HomePage />} />
+            <Route path='Homepage' element={<HomePage />}>
+            </Route>
+              <Route path='preview' element={<div className="container121"><Preview/><video></video></div>}/>
             <Route path='myproject' element={<MyProject />} />
             <Route path="myprofile" element={<MyProfile />} />
           </Route>

@@ -5,7 +5,7 @@ import axios from 'axios';
 import startfirebase from '../../firebaseConfig';
 import { ref, onValue } from "firebase/database"
 import toast, { Toaster } from 'react-hot-toast';
-import QRCode from "react-qr-code";
+import QRCode from "qrcode.react";
 import { ChromePicker } from "react-color";
 import { CiPickerHalf } from "react-icons/ci";
 import { DiJqueryLogo } from "react-icons/di";
@@ -14,6 +14,7 @@ import GetCookie from '../Cookies/GetCookies'
 import HomePageSetCookies from '../Cookies/HomePageCookies/HomePageSetCookies';
 import HomePageRemoveCookies from "../Cookies/HomePageCookies/HomePageRemoveCookies";
 import HomePageGetCookies from '../Cookies/HomePageCookies/HomePageGetCookies';
+import {useNavigate} from "react-router-dom"
 function HomePage() {
     const inputRef = useRef();
     const inputImageRef = useRef()
@@ -29,29 +30,23 @@ function HomePage() {
     const [showColorPicker, setShowColorPicker] = useState(false)
     const [file, setFile] = useState();
     const [getUerId, SetGetUserId] = useState()
-    
-    function handleChange(e) {
-        console.log(e.target.files);
-        setFile(URL.createObjectURL(e.target.files[0]));
-    }
+    const [getVideoName, setGetVideoName] = useState()
+ const navigate = useNavigate()
 
-    const handleMind = (e)=>{
-     console.log(e.target.files);
-    //  setImageSource(URL.createObjectURL(e.target.files[0]))
-     let filess= e.target.files[0]
-     setImageSource(filess)
+
+    // function handleChange(e) {
+    //     setFile(URL.createObjectURL(e.target.files[0]));
+    // }
+
+    const handleMind = (e) => {
+     
+        let filess = e.target.files[0]
+        setImageSource(filess)
     }
-    console.log("imageSource", imageSource);
+   
     const handleFileChange = (event) => {
         let file = event.target.files[0];
-        // let file = URL.createObjectURL(event.target.files[0])
-        // file = file.name
-        // console.log("file", file);
-        // const url = URL.createObjectURL(file);
-        // console.log("url", url);
-        // let file1 = file.name
-        // setSource(url);
-        // console.log("file1", file1);
+       
         setSource(file);
 
     };
@@ -64,46 +59,72 @@ function HomePage() {
     }
     const GenerateQRCode = async (e) => {
         try {
-            await axios.post(`http://localhost:8000/data`, {
-                radio,
-                TranslationURL,
-                radioOne,
-                getUerId
-            }).then(res => {
-                console.log("ressetCheckBoxValue", res.data.data);
-                HomePageRemoveCookies('HomePageData')
-                HomePageSetCookies('HomePageData', JSON.stringify(res.data.data))
-            })
-                .catch((err) => {
-                    console.log(err);
-                });
-            const data = new FormData()
-            data.append("file", source);
-            await axios.post("http://localhost:8000/upload", data).then((res) => {
-                
+
+            const minddata = new FormData();
+            minddata.append("mind", imageSource)
+
+            await axios.post("http://localhost:8000/mindfile", minddata).then((res) => {
+                console.log("minddata", res.data.filename);
+                SetGetUserId(res.data.filename);
             }).catch((e) => {
                 console.log("e", e);
             })
 
 
+            const data = new FormData()
+            data.append("file", source);
+            await axios.post("http://localhost:8000/upload", data).then((res) => {
+                console.log("resaaa", res.data.filename);
+                setGetVideoName(res.data.filename)
+            }).catch((e) => {
+                console.log("e", e);
+            })
 
-            // const minddata = new FormData();
-            //  minddata.append("mind", imageSource)
+            await axios.post(`http://localhost:8000/data`, {
+                radio,
+                TranslationURL,
+                radioOne,
+                // getUerId,
+                // getVideoName
+            }).then(res => {
+                console.log("ressetCheckBoxValue", res.data);
+                let checkdata = res.data.webardata.TranslationURL
+                let chexk = res.data.webardata.radioOne;
+                let check = res.data.webardata.radio;
+                let dataget = res.data.dataget;
+                let filetoupload = res.data.filetoupload;
+                if(checkdata && chexk && check && dataget && filetoupload){
+                    localStorage.setItem("total data", JSON.stringify(res.data))
+                    navigate("/sidebar/preview")
+                    toast.success("Please Fill All input Feild")
+                }
 
-            //  await axios.post("http://localhost:8000/mindfile", minddata).then((res)=>{
-            //     console.log("minddata", res);
-            //  }).catch((e) => {
-            //     console.log("e", e);
-            // })
-
+            })
+                .catch((err) => {
+                    console.log(err);
+                });
         } catch (e) {
             console.log("e", e);
         }
     }
-    const imageRemove = () => {
-        setFile();
-    }
 
+
+    // const imageRemove = () => {
+    //     setFile();
+    // }
+
+    // const downloadQR = () => {
+    //     const qrCodeURL = document.getElementById('qrCodeEl')
+    //         .toDataURL("image/png")
+    //         .replace("image/png", "image/octet-stream");
+    //     console.log(qrCodeURL)
+    //     let aEl = document.createElement("a");
+    //     aEl.href = qrCodeURL;
+    //     aEl.download = "QR_Code.png";
+    //     document.body.appendChild(aEl);
+    //     aEl.click();
+    //     document.body.removeChild(aEl);
+    // };
     return (
         <div className='container' style={{ maxHeight: '100vh' }} >
             {/* <form onSubmit={handlesubmit} method="post" action='/data'> */}
@@ -115,11 +136,7 @@ function HomePage() {
             <div className='row ms-md-5'>
 
                 <div className='col-lg-6 col-11 text-start' >
-                    {/* <label for="formFile" className='YouTube-p text-start form-label'>YouTube URL</label>
-                    <div className="input-group " style={{ border: '1px solid rgb(51, 51, 51)', background: "white", borderRadius: "5px" }}>
-                        <span className="input-group-text " style={{ backgroundColor: 'white', border: '2px solid transparent' }}><BiSearch size={20} color="black" /></span>
-                        <input type="text" className="form-control" placeholder="search" aria-label="Username" aria-describedby="basic-addon1" />
-                    </div> */}
+                   
                     <div className="VideoInput mt-3">
                         <label className='YouTube-p text-start form-label'>Uplaod Video</label><br />
                         <input
@@ -127,22 +144,9 @@ function HomePage() {
                             className="VideoInput_input form-control"
                             type="file"
                             onChange={handleFileChange}
-                        // accept=".mov,.mp4"
-                        // method="POST"
+                            required
                         />
-                        {/* {!source && <button onClick={handleChoose}>Choose</button>} */}
-                        {/* {source && (
-        <video
-          className="VideoInput_video"
-          width="20%"
-          height={"20%"}
-          controls
-          src={source}
-        />
-      )} */}
-                        {/* <div className="VideoInput_footer mt-2">{source || ""}</div> */}
                     </div>
-                    {/* <button className='btn btn-upload mt-3'>Upload Video</button> */}
                 </div>
             </div>
 
@@ -151,14 +155,12 @@ function HomePage() {
                     <h5 className='video-h5'>Your Maker</h5>
                 </div>
             </div>
-            <div className='row'>
+            {/* <div className='row'>
                 <div className='col-md-2 col-11 ms-md-5 text-start'>
                     <button className='btn btn-upload mt-3' onClick={() => setqrscan(!qrscan)}>Create QR Code</button>
-                    {/* <button className='btn btn-upload mt-3'>Upload Image</button> */}
                 </div>
-            </div>
-
-            {
+            </div> */}
+            {/* {
                 qrscan ? (
                     <div className='row'>
                         <div class="col-lg-6">
@@ -169,7 +171,7 @@ function HomePage() {
                                     <div class="tab-content">
                                         <div className='row d-flex justify-content-center'>
                                             <div className='col-lg-6 text-start'>
-                                                <h5>Background</h5>
+                                                <h5>Foreground</h5>
                                                 <div className='d-flex justify-content-center'>
                                                     <div className='col-md-12 '>
                                                         <button className='btn btn-clor' onClick={() => setShowColorPicker(showColorPicker => !showColorPicker)}>{isColor}</button>
@@ -182,7 +184,7 @@ function HomePage() {
                                                 </div>
                                             </div>
                                             <div className='col-lg-6 text-start'>
-                                                <h5>Foreground</h5>
+                                                <h5>background</h5>
                                                 <div className='d-flex justify-content-center'>
                                                     <div className='col-md-12 '>
                                                         <button className='btn btn-clor' onClick={() => setShowColorPickerOne(showColorPickerOne => !showColorPickerOne)}>{isColorOne}</button>
@@ -218,32 +220,34 @@ function HomePage() {
                                 </div>
                             </div>
                         </div>
-                        {/**/}
+                        
                         <div className='col-lg-5'>
                             <div style={{ height: "auto", margin: "0 auto", maxWidth: 224, width: "100%", position: "relative", backgroundColor: "green" }} className="d-flex justify-content-center align-items-center">
                                 <QRCode
                                     bgColor={isColor}
                                     fgColor={isColorOne}
-                                    // size={256}
                                     style={{ height: "auto", maxWidth: "100%", width: "100%", }}
-                                    value="data"
-                                    viewBox={`0 0 256 256`}
+                                    id="qrCodeEl"
+                                    value="qrCodeEl"
+                                    level={"H"}
+                                    includeMargin={true}
                                 />
-                                <img src={file} width="70px" className='mt-3' style={{ position: "absolute" }} />
+                                <img src={file} width="40px" className='mt-3' style={{ position: "absolute" }} />
                             </div>
+                            <button className="btn btn-primary mt-3" onClick={downloadQR}> Download QR </button>
                         </div>
 
                     </div>
                 ) : (<>
                 </>)
-            }
+            } */}
 
             <div className='row'>
                 <div className='col-12 mt-3'>
-                <h5 className="YouTube-p text-start form-label ms-5 mt-3">Convert image to Mind File</h5>
+                    <h5 className="YouTube-p text-start form-label ms-5 mt-3">Convert image to Mind File</h5>
                 </div>
                 <div className='col-md-2 col-11 ms-md-5 text-start mt-3'>
-                    <button className='btn btn-upload ' ><a href='https://projects.sirattech.com/mind-ar-js-master/examples/image-tracking/compile.html' style={{ textDecoration: "none", color: "white" }}  target="_blank">Image Compiler</a></button>
+                    <button className='btn btn-upload'><a href='https://projects.sirattech.com/mind-ar-js-master/examples/image-tracking/compile.html' style={{ textDecoration: "none", color: "white" }} target="_blank">Image Compiler</a></button>
                 </div>
             </div>
 
@@ -258,6 +262,8 @@ function HomePage() {
                         className="VideoInput_input form-control"
                         type="file"
                         accept="image/mind"
+                        name='mind'
+                        required
                     />
                 </div>
             </div>
@@ -266,21 +272,21 @@ function HomePage() {
                     <h5 className='video-h5'>Video Postion (In Relation to Your Maker)</h5>
                 </div>
                 <div className='col-md-10  text-start ms-md-5 mt-3 uper-form'>
-                    {/* <form > */}
+
                     <div class="form-check d-flex align-items-center mb-3">
-                        <input className="form-check-input mt-2" type="radio" name="exampleRadios" id="exampleRadios1" value="Play Video on above of Maker" checked={radio === "Play Video on above of Maker"} onChange={handleRadio} />
+                        <input className="form-check-input mt-2" type="radio" name="exampleRadios" id="exampleRadios1" value="0 0.95 0" checked={radio === "0 0.95 0"} onChange={handleRadio} required/>
                         <label className="form-check-label YouTube-p mt-2" htmlFor="exampleRadios1">
                             &nbsp;&nbsp;&nbsp;Play Video on above of Maker
                         </label>
                     </div>
                     <div className="form-check d-flex align-items-center mb-3">
-                        <input className="form-check-input mt-2" type="radio" name="exampleRadios" id="exampleRadios2" value="Play Video on top of maker" checked={radio === "Play Video on top of maker"} onChange={handleRadio} />
+                        <input className="form-check-input mt-2" type="radio" name="exampleRadios" id="exampleRadios2" value="0 0.28 0" checked={radio === "0 0.28 0"} onChange={handleRadio} required/>
                         <label className="form-check-label YouTube-p mt-2" htmlFor="exampleRadios2">
                             &nbsp;&nbsp;&nbsp;Play Video on top of maker
                         </label>
                     </div>
                     <div className="form-check d-flex align-items-center mb-2">
-                        <input className="form-check-input mt-2" type="radio" name="exampleRadios" id="exampleRadios3" value="Float Video below my Maker" checked={radio === "Float Video below my Maker"} onChange={handleRadio} />
+                        <input className="form-check-input mt-2" type="radio" name="exampleRadios" id="exampleRadios3" value="0 -0.22 0" checked={radio === "0 -0.22 0"} onChange={handleRadio} required/>
                         <label className="form-check-label YouTube-p mt-2" htmlFor="exampleRadios3">
                             &nbsp;&nbsp;&nbsp;Float Video below my Maker
                         </label>
@@ -306,32 +312,20 @@ function HomePage() {
             <div className='col-10 text-start ms-md-5 mt-3 down-form pb-3 uper-form' >
                 {/* <form> */}
                 <div class="form-check d-flex align-items-center mb-3">
-                    <input className="form-check-input mt-2" type="radio" name="Second" id="Second" value="Second" checked={radioOne === "Second"} onChange={handleRadioOne} />
+                    <input className="form-check-input mt-2" type="radio" name="Second" id="Second" value="Second" checked={radioOne === "Second"} onChange={handleRadioOne} required/>
                     <label className="form-check-label YouTube-p mt-2" htmlFor="Second">
                         &nbsp;&nbsp; Second
                     </label>
                 </div>
                 <div className="form-check d-flex align-items-center mb-3">
-                    <input className="form-check-input mt-2" type="radio" name="Second" id="Video" value="End of Video" checked={radioOne === "End of Video"} onChange={handleRadioOne} />
+                    <input className="form-check-input mt-2" type="radio" name="Second" id="Video" value="End of Video" checked={radioOne === "End of Video"} onChange={handleRadioOne} required/>
                     <label className="form-check-label YouTube-p mt-2" htmlFor="Video">
                         &nbsp;&nbsp; End of Video
                     </label>
                 </div>
 
-
             </div>
-            {/* <button type='submit'>data</button> */}
-            <button
-                // type='submit'
-                onClick={GenerateQRCode}
-            >Generate</button>
-            {/* {qr && <>
-				<img src={qr} />
- 				<a href={qr} download="qrcode.png">Download</a>
-			</>} */}
-            {/* </form> */}
-
-
+            <button className='btn btn-primary mb-3' onClick={GenerateQRCode}>Generate</button>
             <Toaster
                 position="top-right"
                 reverseOrder={false}

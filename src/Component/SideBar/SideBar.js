@@ -41,6 +41,7 @@ import {
 import MyProject from '../MyProject/MyProject';
 import MyProfile from '../my-profile/MyProfile';
 import MindarViewer from '../../mindar-viewer';
+import Preview from '../Preview/Preview';
 const drawerWidth = 240;
 
 interface Props {
@@ -52,9 +53,9 @@ export default function ResponsiveDrawer(props: Props, { started }) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isColor, setIsColor] = useState("Create AR Project")
-  const [navColor, isNavColor] = useState("")
+  const [navColor, isNavColor] = useState("save")
   const { pathname } = useLocation();
-  
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -73,14 +74,24 @@ export default function ResponsiveDrawer(props: Props, { started }) {
       }
     }
   }
+  const ChangeRouteTwo = () => {
+    if (pathname) {
+      if (pathname == "/sidebar/HomePage") {
+        isNavColor("save")
+      } else if (pathname == "/sidebar/preview") {
+        isNavColor("Preview")
+      }
+    }
+  }
   useEffect(() => {
     changeRoute()
-
-  }, [])
-
+  },[])
+  useEffect(()=>{
+    ChangeRouteTwo()
+  },[])
   const navigate = useNavigate()
 
-   let auth = localStorage.getItem("webar")
+  let auth = localStorage.getItem("webar")
 
   const drawer = (
     <div className="stakenmsColor1" style={{ color: "white" }}>
@@ -90,65 +101,65 @@ export default function ResponsiveDrawer(props: Props, { started }) {
       </Toolbar>
       <br />
       <Divider />
-       {
-        auth ? <List> 
-        <Link to="/sidebar/Homepage" style={{ textDecoration: "none" }}>
-          <ListItem button href="#deshborad" key="Dashboard"
-            onClick={() => {
-              setIsColor("Create AR Project")
-            }}
-            className={isColor == "Create AR Project" ? ' staking-btn_active' : 'staking-btn'}>
-            <ListItemIcon >
-              <AiOutlineHome color='blue' size={20} />
-            </ListItemIcon>
-            <ListItemText primary="Create AR Project" />
-          </ListItem>
-        </Link>
-        <Link to="/sidebar/myproject" style={{ textDecoration: "none" }}>
-          <ListItem button key="My Project"
-            onClick={() => {
-              setIsColor("My Project")
-            }}
-            className={isColor == "My Project" ? ' staking-btn_active' : 'staking-btn text-white'}>
+      {
+        auth ? <List>
+          <Link to="/sidebar/Homepage" style={{ textDecoration: "none" }}>
+            <ListItem button href="#deshborad" key="Dashboard"
+              onClick={() => {
+                setIsColor("Create AR Project")
+              }}
+              className={isColor == "Create AR Project" ? ' staking-btn_active' : 'staking-btn'}>
+              <ListItemIcon >
+                <AiOutlineHome color='blue' size={20} />
+              </ListItemIcon>
+              <ListItemText primary="Create AR Project" />
+            </ListItem>
+          </Link>
+          <Link to="/sidebar/myproject" style={{ textDecoration: "none" }}>
+            <ListItem button key="My Project"
+              onClick={() => {
+                setIsColor("My Project")
+              }}
+              className={isColor == "My Project" ? ' staking-btn_active' : 'staking-btn text-white'}>
 
-            <ListItemIcon>
-              <HiMenuAlt4 color='blue' size={20} />
-            </ListItemIcon>
-            <ListItemText primary="My Projects" />
-          </ListItem>
-        </Link>
-        <Link to="/sidebar/myprofile" style={{ textDecoration: "none" }}>
-          <ListItem button key="My Account"
-            onClick={() => {
-              setIsColor("View Miner")
-            }}
-            className={isColor == "View Miner" ? ' staking-btn_active' : 'staking-btn text-white'}
-          >
-            <ListItemIcon>
-              <RiAccountCircleFill color='blue' size={20} />
-            </ListItemIcon>
-            <ListItemText primary="My Account" />
-          </ListItem>
-        </Link>
+              <ListItemIcon>
+                <HiMenuAlt4 color='blue' size={20} />
+              </ListItemIcon>
+              <ListItemText primary="My Projects" />
+            </ListItem>
+          </Link>
+          <Link to="/sidebar/myprofile" style={{ textDecoration: "none" }}>
+            <ListItem button key="My Account"
+              onClick={() => {
+                setIsColor("View Miner")
+              }}
+              className={isColor == "View Miner" ? ' staking-btn_active' : 'staking-btn text-white'}
+            >
+              <ListItemIcon>
+                <RiAccountCircleFill color='blue' size={20} />
+              </ListItemIcon>
+              <ListItemText primary="My Account" />
+            </ListItem>
+          </Link>
 
-        <Link to="/mindar" style={{ textDecoration: "none" }}>
-          <ListItem button key="WebAR"
-            onClick={() => {
-              setIsColor("WebAR")
-            }}
-            className={isColor == "WebAR" ? ' staking-btn_active' : 'staking-btn text-white'}
-          >
-            <ListItemIcon>
-              <RiAccountCircleFill color='blue' size={20} />
-            </ListItemIcon>
-            <ListItemText primary="WebAR" />
-          </ListItem>
-        </Link>
-      </List> : 
-      <>
-      </>
-       }
-      
+          <Link to="/mindar" style={{ textDecoration: "none" }}>
+            <ListItem button key="WebAR"
+              onClick={() => {
+                setIsColor("WebAR")
+              }}
+              className={isColor == "WebAR" ? ' staking-btn_active' : 'staking-btn text-white'}
+            >
+              <ListItemIcon>
+                <RiAccountCircleFill color='blue' size={20} />
+              </ListItemIcon>
+              <ListItemText primary="WebAR" />
+            </ListItem>
+          </Link>
+        </List> :
+          <>
+          </>
+      }
+
 
     </div>
   );
@@ -183,8 +194,8 @@ export default function ResponsiveDrawer(props: Props, { started }) {
                 <Navbar.Collapse id="responsive-navbar-nav" >
                   <Nav className=" nav  d-flex justify-content-evenly nav-one-width" >
 
-                    <Nav.Link href="#save" className={navColor == "save" ? 'nav-text-active' : "nav-text"} id="save" onClick={() => isNavColor("save")}>Save</Nav.Link>
-                    <Nav.Link href="#Preview" className={navColor == "Preview" ? 'nav-text-active' : "nav-text"} id="Preview" onClick={() => isNavColor("Preview")}>Preview</Nav.Link>
+                    <Nav.Link href="" className={navColor == "save" ? 'nav-text-active' : "nav-text"} id="save" onClick={() => isNavColor("save")} ><Link to="/sidebar/Homepage" style={{ textDecoration: "none", color: "black" }}>Save</Link></Nav.Link>
+                    <Nav.Link href="" className={navColor == "Preview" ? 'nav-text-active' : "nav-text"} id="Preview" onClick={() => isNavColor("Preview")} >Preview</Nav.Link>
                     <Nav.Link href="#Publish" className={navColor == "Publish" ? 'nav-text-active' : "nav-text"} id="Publish" onClick={() => isNavColor("Publish")}>Publish</Nav.Link>
                   </Nav>
                   <Nav className=' d-flex align-items-center justify-content-start'>
@@ -237,7 +248,9 @@ export default function ResponsiveDrawer(props: Props, { started }) {
       >
         <Toolbar />
         <Routes>
-          <Route exact path='/Homepage' element={<HomePage />} />
+          <Route exact path='/Homepage' element={<HomePage />} >
+          </Route>
+          <Route path="preview" element={<Preview/>} />
           <Route exact path="/myproject" element={<MyProject />} />
           <Route exact path="/myprofile" element={<MyProfile />} />
           <Route exact path="/mindar" element={<div className="container121"><MindarViewer /><video></video></div>} />

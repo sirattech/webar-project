@@ -35,8 +35,6 @@ function Login({ setStarted }) {
   })
   const [passwordShown, setPasswordShown] = useState(false);
   const togglePassword = () => {
-    // When the handler is invoked
-    // inverse the boolean state of passwordShown
     setPasswordShown(!passwordShown);
   };
   const formOptions = { resolver: yupResolver(formSchema) }

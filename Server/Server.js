@@ -36,56 +36,97 @@ MongoClient.connect(url, function (err, db) {
   db.close();
 });
 
-
+let dataget;
 // ...........................HomePage Data Upload ........................//
 app.post("/data", (req, res) => {
   let webardata = req.body
+  let myobj = {webardata, filetoupload, dataget};
   // console.log("webardata", webardata);
   MongoClient.connect(url, async (err, db) => {
     if (err) throw err;
     var dbo = db.db("mydb");
-    var myobj = {webardata, filetoupload};
+    ;
     dbo.collection("webardata").insertOne(myobj, function (err, res) {
       // console.log("result", res);
       if (err) throw err;
       db.close();
     });
+    console.log("myobj", myobj);
   })
-  res.send({status:"ok", data: webardata})
+  res.send(myobj)
+  // console.log("myobj", myobj);
 })
 
+app.get("/getdata", async(req,res)=>{
+  let data
+  MongoClient.connect(url, async (err, db) => {
+    if (err) throw err;
+    var dbo = db.db("mydb");
+    // var myobj = {webardata, filetoupload, dataget};
+    data = await dbo.collection("webardata").find({})
+    .toArray(function(err, result) {
+      if (err) throw err;
+      // console.log(result);
+      res.send(result)
+      db.close();
+    });
+  }) 
+
+
+})
 // ................................Video Upload .............................//
-var storage = multer.diskStorage({
+// var storage = multer.diskStorage({
 
-  destination: function (req, file, cb) {
-    cb(null, './uploads')
-  },
-  filename: function (req, file, cb) {
-    filetoupload = Date.now() + '-' + file.originalname
-    cb(null, filetoupload)
-  }
-})
+//   destination: function (req, file, cb) {
+//     cb(null, './uploads')
+//   },
+//   filename: function (req, file, cb) {
+//     filetoupload = Date.now() + '-' + file.originalname
+//     cb(null, filetoupload)
+//   }
+// })
 
-var upload = multer({ storage: storage }).single('file')
-app.post("/upload", (req, res) => {
-  // res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Content-Type', 'text/html');
-  // console.log(res.body);
-  upload(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      return res.status(500).json(err)
-    } else if (err) {
-      return res.status(500).json(err)
-    }
-    // return res.status(200).send(req.file)
-    res.send(
-      {
-      file: `/${req.file.originalname}`
-    }
-    )
+// var upload = multer({ storage: storage }).single('file')
+// app.post("/upload", (req, res) => {
+  
+//   res.setHeader('Content-Type', 'text/html');
+  
+//   upload(req, res, function (err) {
+//     if (err instanceof multer.MulterError) {
+//       return res.status(500).json(err)
+//     } else if (err) {
+//       return res.status(500).json(err)
+//     }
+   
+//     res.send(
+//       {
+//       file: `/${req.file.originalname}`
+//     }
+//     )
+//   })
+  
+// })
+
+const upload = multer({
+  storage: multer.diskStorage({
+      destination: function(req,res,cb){
+          cb(null, "uploads")
+      },
+      filename: function(req,file,cb){
+        filetoupload = file.fieldname + "-" + Date.now() + ".mp4"
+          cb(null,filetoupload)
+      }
   })
-  // res.status(200).send({status: true, file: res.body})
-})
+}).single("file")
+
+app.post("/upload",upload, (req,res)=>{
+  // console.log(req.file);
+
+  res.send(req.file)
+} )
+
+
+
 app.get("/", (req, res)=>{
   try {
       res.status(200).send("server 🏃🏻‍♂️ good")
@@ -101,7 +142,7 @@ app.get("/datas", (req, res) => {
 
 
 // ...........................signup page ...............................//
-var sCode;
+
 app.post("/register", async (req, res) => {
   let parcel = req.body
   // console.log("parcel", parcel);
@@ -129,7 +170,7 @@ app.post("/register", async (req, res) => {
 
 
 //...........................Login Page .................................//
-var Lcode;
+
 // var Id;
 app.post("/login-data", async (req, res) => {
   try{
@@ -164,57 +205,25 @@ app.post("/login-data", async (req, res) => {
 
 //...................................mind File Upload .......................//
 
-// const mindUpload = multer({
-//   storage: multer.diskStorage({
-//     destination: function(req,res,cb){
-//       cb(null, "uploads/mind")
-//     },
-//     filename :function(res,req,cb){
-//       cb(null, file.filename + "-" + Date.now() + ".mind")
-//     }
-//   })
-// }).single("mind")
-
 
 const mindUpload = multer({
   storage: multer.diskStorage({
       destination: function(req,res,cb){
-          cb(null, "/mind")
+          cb(null, "mind")
       },
       filename: function(req,file,cb){
-          dataget = file.fieldname + "-" + Date.now() + ".png"
+          dataget = file.fieldname + "-" + Date.now() + ".mind"
           cb(null,dataget)
       }
   })
 }).single("mind")
 
 app.post("/mindfile",mindUpload, async(req,res)=>{
-  // let {filename} = req.file
-  console.log(req.file);
-  // let data = new product(req.file)
-  // let result = await data.save()
-  // console.log(result);
-  res.send("result");
+ 
+  res.send(req.file);
 })
+app.use('/mind', express.static(path.join(__dirname, '/mind')));
 
-// const mindUpload = multer({
-//   storage: multer.diskStorage({
-//       destination: function(req,res,cb){
-//           cb(null, "uploads/mind")
-//       },
-//       filename: function(req,file,cb){
-//          let dataget = file.fieldname + "-" + Date.now() + ".png"
-//           cb(null,dataget)
-//       }
-//   })
-// }).single("user_file")
-
-
-// app.post("/mindfile",mindUpload, async(req,res)=>{
-//     console.log(req.file);
-
-//     res.send('mind')
-// })
 
 
 

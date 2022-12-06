@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import "./Signup.css";
 // import more from "../../Assets/more (5).png"
 // import GoPrimitiveDot from "react-icons/go"
@@ -18,6 +18,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import axios from 'axios';
+import {AiFillEyeInvisible} from "react-icons/ai"
+import {MdVisibility} from "react-icons/md"
 import toast, { Toaster } from 'react-hot-toast';
 
 function Signup() {
@@ -45,37 +47,14 @@ function Signup() {
       .required('Password is mandatory')
       .oneOf([Yup.ref('password')], 'Passwords does not match'),
   })
-
+  const [showPassword,setShowPassword] = useState(false);
+  const [showPasswordOne, setShowPasswordOne] = useState(false);
   const formOptions = { resolver: yupResolver(formSchema) }
   const { register, handleSubmit, resetField, watch, formState: { errors } } = useForm(formOptions);
   const onSubmit = async (data) => {
     try {
       console.log("data", data)
-      // let task = {
-      //   item: data
-      // }
-      let firstNames = data.firstName
-      let lastName = data.lastName
-      let emailadress = data.email
-      let passwords = data.password
-      let conform = data.confirmPwd
-      // await axios.post("http://localhost:8000/register", {
-      //   // headers: {
-      //   //   "Content-Type": "application/json",
-          
-      //   // },
-      //   body: data
-      //   // JSON.stringify({
-      //   //   firstNames,
-      //   //   lastName,
-      //   //   emailadress,
-      //   //   passwords,
-      //   //   conform
-      //   // })
-      // }).then((data) => {
-      //   console.log(data, "userRegister");
-       
-      // });
+      
     await axios.post("http://localhost:8000/register", data).then(res=>{
         console.log("res", res.data);
         if(res.data == "data successfully enter"){
@@ -158,15 +137,15 @@ console.log("e", e);
                 </div>
                 <div className='mb-2'>
                   <div className="input-group ">
-                    <input type="password" className="form-control input-data" name='passwords' placeholder="Password" aria-label="Username" aria-describedby="basic-addon1" {...register("password", { required: true })} required />
-                    <span className="input-group-text" id="basic-addon1"><RiLockPasswordFill /></span>
+                    <input type={showPassword ? "text" : "password"} className="form-control input-data" name='passwords' placeholder="Password" aria-label="Username" aria-describedby="basic-addon1" {...register("password", { required: true })} required />
+                    <span className="input-group-text" onClick={()=>setShowPassword(!showPassword)} style={{cursor: "pointer"}} id="basic-addon1">{showPassword ? <MdVisibility/> : <AiFillEyeInvisible/> }</span>
                   </div>
                   {/* {errors.password &&<> &nbsp;<span style={{color:"red"}}>{errors.password.message}</span></>} */}
                 </div>
                 <div>
                   <div className="input-group mb-2">
-                    <input type="password" className="form-control" name='conform' placeholder="conform Password" aria-label="Username" aria-describedby="basic-addon1" {...register("confirmPwd", { required: true })} required />
-                    <span className ="input-group-text" id="basic-addon1"><RiLockPasswordFill /></span>
+                    <input type={showPasswordOne ? "text" : "password"} className="form-control" name='conform' placeholder="conform Password" aria-label="Username" aria-describedby="basic-addon1" {...register("confirmPwd", { required: true })} required />
+                    <span className ="input-group-text" onClick={()=>setShowPasswordOne(!showPasswordOne)} style={{cursor: "pointer"}} id="basic-addon1">{showPasswordOne ? <MdVisibility/> : <AiFillEyeInvisible/> }</span>
                   </div>
                   {errors.confirmPwd && <> &nbsp;<span style={{ color: "red" }}>{errors.confirmPwd.message}</span></>}
                 </div>
